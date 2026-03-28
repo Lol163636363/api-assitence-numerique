@@ -1,0 +1,11 @@
+# Ignorer les fichiers Python compilés
+*.pyc
+
+# Ignorer le répertoire de cache Python
+__pycache__/
+
+# Ignorer les dépendances Node.js
+node_modules/
+
+# Ignorer les fichiers d'environnement
+.env
