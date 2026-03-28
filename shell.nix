@@ -19,3 +19,4 @@ pkgs.mkShell {
     echo "🧠 Groq API + Piper TTS sont prêts."
   '';
 }
+
