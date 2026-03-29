@@ -31,7 +31,7 @@ def interroger_groq(texte_utilisateur: str) -> str:
     
     # Le "System Prompt" est crucial pour dicter le comportement de l'IA à l'oral
     payload = {
-        "model": "llama3-8b-8192", # Modèle ultra-rapide et performant
+        "model": "llama-3.1-8b-instant", # Modèle ultra-rapide et performant
         "messages": [
             {
                 "role": "system",
@@ -50,39 +50,52 @@ def interroger_groq(texte_utilisateur: str) -> str:
     
     # Extraction du texte de la réponse
     return reponse.json()["choices"][0]["message"]["content"]
-
+    
 @app.post("/chat")
 async def discuter_avec_ia(message: MessageMobile, background_tasks: BackgroundTasks):
     print(f"👤 L'utilisateur dit : {message.texte}")
     
     # 1. On demande à Groq de réfléchir
-    print("🧠 Réflexion de l'IA Groq en cours...")
-    reponse_ia = interroger_groq(message.texte)
-    print(f"🤖 L'IA répond : {reponse_ia}")
+    try:
+        print("🧠 Réflexion de l'IA Groq en cours...")
+        reponse_ia = interroger_groq(message.texte)
+        print(f"🤖 L'IA répond : {reponse_ia}")
+    except Exception as e:
+        print(f"❌ Erreur Groq : {e}")
+        raise HTTPException(status_code=500, detail="L'IA Groq a refusé la requête (Vérifie ta clé API).")
     
     # 2. On génère la voix avec Piper
     nom_fichier = f"audio_{uuid.uuid4().hex}.wav"
     modele_voix = "fr_FR-siwis-medium.onnx"
     
-    process = subprocess.Popen(
-        ["piper", "--model", modele_voix, "--output_file", nom_fichier],
-        stdin=subprocess.PIPE,
-        stderr=subprocess.DEVNULL
-    )
-    process.communicate(input=reponse_ia.encode('utf-8'))
+    print(f"🗣️ Génération de la voix dans : {nom_fichier}")
+    
+    try:
+        # On utilise run() au lieu de Popen pour être sûr que Piper a fini avant de continuer
+        process = subprocess.run(
+            ["piper", "--model", modele_voix, "--output_file", nom_fichier],
+            input=reponse_ia.encode('utf-8'),
+            capture_output=True
+        )
+        
+        # VERIFICATION CRITIQUE : Le fichier existe-t-il vraiment ?
+        if not os.path.exists(nom_fichier):
+            print(f"❌ ERREUR : Piper n'a pas généré le fichier. Sortie erreur : {process.stderr.decode()}")
+            raise HTTPException(status_code=500, detail="Piper n'a pas pu générer l'audio.")
+
+    except Exception as e:
+        print(f"❌ Erreur système lors du lancement de Piper : {e}")
+        raise HTTPException(status_code=500, detail="Erreur interne du moteur vocal.")
     
     # 3. On programme le nettoyage
     background_tasks.add_task(supprimer_fichier, nom_fichier)
     
-    # 4. On renvoie l'audio (et on ajoute la réponse texte dans les headers pour le debug ou l'affichage mobile)
+    # 4. On renvoie l'audio
     print("📤 Envoi de la réponse audio au téléphone...")
-    
-    # On nettoie les retours à la ligne pour que ça passe dans les headers HTTP
     header_texte = reponse_ia.replace('\n', ' ').encode('latin-1', 'ignore').decode('latin-1')
     
     return FileResponse(
         path=nom_fichier, 
         media_type="audio/wav", 
-        filename="reponse_ia.wav",
         headers={"X-IA-Reponse": header_texte}
     )
