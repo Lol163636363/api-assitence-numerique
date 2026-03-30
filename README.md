@@ -40,6 +40,6 @@
 ### 1. Préparer le serveur
 Clonez le dépôt et entrez dans l'environnement reproductible :
 ```bash
-git clone [https://github.com/votre-username/mamAI.git](https://github.com/votre-username/mamAI.git)
+git clone [https://github.com/Lol163636363/api-assitence-numerique](https://github.com/Lol163636363/api-assitence-numerique)
 cd mamAI
 nix-shell
