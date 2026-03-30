@@ -1,32 +1,45 @@
-# 🎙️ VoxLocal AI : Assistant Vocal Privé (Groq + Piper TTS)
+# 🎙️ mamAI : Memory Agenda Master AI
+> *"L'intelligence souveraine au creux de la main, la confidentialité en plus."*
 
-**VoxLocal AI** est un serveur d'assistance vocale hybride conçu pour être le "cerveau" et la "voix" de votre application mobile. 
+**mamAI** est un assistant personnel hybride conçu pour transformer votre serveur **NixOS** en un véritable centre de commande façon J.A.R.V.I.S. Il combine la puissance de calcul brute du Cloud pour la réflexion et la sécurité du local pour la voix.
 
-Il combine la vitesse fulgurante des modèles de langage de **Groq** (pour générer des réponses intelligentes) avec la confidentialité de **Piper TTS** (pour synthétiser la voix 100% en local sur votre machine). Le tout est packagé pour **NixOS** et exposé de manière sécurisée via **Cloudflare Tunnels**.
+---
 
-## ✨ Fonctionnalités Principales
+## 🧩 L'ADN de mamAI (Le concept JARVIS)
+*   **M**emory : Une mémoire contextuelle pour un assistant qui apprend de vous.
+*   **A**genda : Gestion intelligente du temps, des rendez-vous et des rappels.
+*   **M**aster : L'orchestrateur central (FastAPI) qui pilote les services.
+*   **AI** : Inférence ultra-rapide via **Llama 3.3 70B** (Groq).
 
-* **Cerveau Cloud ultra-rapide :** Utilise l'API Groq (Llama 3) pour des réponses intelligentes et instantanées.
-* **Voix 100% Locale :** La synthèse vocale est calculée sur votre processeur via Piper TTS (modèle neuronal français *Siwis*). Votre voix ne fuite pas sur Internet.
-* **Formatage Spécial Voix :** Le prompt système de l'IA est optimisé pour générer du texte fluide, sans caractères Markdown imprononçables.
-* **Architecture NixOS :** Environnement de développement reproductible (`shell.nix`) sans conflit de dépendances.
-* **API Mobile-Ready :** Renvoie directement le flux audio `.wav` ainsi que le texte généré dans les en-têtes HTTP pour un affichage synchronisé sur l'application mobile.
+---
 
-## 🏗️ Architecture du Flux (Workflow)
+## ✨ Fonctionnalités Clés
+*   **Cerveau Hybride :** Réponse textuelle quasi-instantanée via l'API **Groq**.
+*   **Voix 100% Locale :** Synthèse vocale neuronale via **Piper TTS** (modèle *Siwis*) s'exécutant sur votre CPU.
+*   **Souveraineté :** Vos données vocales ne sont jamais envoyées dans le cloud.
+*   **Tunneling Sécurisé :** Accès distant chiffré via **Cloudflare Tunnels** (pas d'ouverture de ports).
+*   **App Mobile Native :** Interface de chat élégante développée avec **Flutter**.
 
-1. **📱 Application Mobile** envoie une question texte (`POST /chat`).
-2. **⚙️ FastAPI (NixOS)** reçoit la question et l'envoie à l'API **Groq**.
-3. **🧠 Groq** génère la réponse intelligente et la renvoie à FastAPI.
-4. **🗣️ Piper TTS** transforme cette réponse texte en fichier audio localement.
-5. **📤 FastAPI** renvoie le fichier audio au téléphone, ajoute le texte dans les headers, puis supprime le fichier temporaire du serveur.
+---
 
-## 🛠️ Prérequis
+## 🏗️ Architecture Technique
 
-* Un système avec **Nix** installé (NixOS recommandé).
-* Une clé API gratuite sur [Groq Console](https://console.groq.com/).
+1.  **📱 Client (Flutter)** : Capture le texte et joue le flux audio binaire reçu.
+2.  **🛡️ Passerelle (Cloudflare)** : Sécurise l'accès à votre serveur domestique.
+3.  **⚙️ Cœur (FastAPI)** : 
+    *   Reçoit la requête.
+    *   Interroge le LLM.
+    *   Déclenche Piper pour générer le `.wav`.
+    *   Renvoie l'audio + le texte (via Headers HTTP).
+    *   Nettoie les fichiers temporaires.
 
-## 📦 Installation
+---
 
-1. **Préparer le dossier du projet :**
-   ```bash
-   mkdir voxlocal-ai && cd voxlocal-ai
+## 🛠️ Installation (NixOS)
+
+### 1. Préparer le serveur
+Clonez le dépôt et entrez dans l'environnement reproductible :
+```bash
+git clone [https://github.com/votre-username/mamAI.git](https://github.com/votre-username/mamAI.git)
+cd mamAI
+nix-shell
