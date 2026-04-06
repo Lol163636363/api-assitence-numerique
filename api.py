@@ -21,7 +21,7 @@ GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions"
 MODEL        = "llama-3.3-70b-versatile"
 PIPER_MODEL  = os.environ.get(
     "PIPER_MODEL",
-    "/home/lol/api assitence numerique/fr_FR-siwis-medium.onnx"  # ← adapte ce chemin
+    os.path.join(os.path.dirname(__file__), "fr_FR-siwis-medium.onnx")
 )
 
 SYSTEM_PROMPT = (

@@ -9,4 +9,26 @@ node_modules/
 
 # Ignorer les fichiers d'environnement
 .env
+.env.local
+.env*.local
+
+# Fichiers audio temporaires
 *.wav
+/tmp/
+
+# Fichiers IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Build & Distribution
+dist/
+build/
+*.egg-info/
+.pytest_cache/
+
+# OS
+.DS_Store
+Thumbs.db
